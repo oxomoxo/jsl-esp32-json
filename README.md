@@ -1,40 +1,45 @@
-## Welcome to GitHub Pages
+## A lean json parser and data tree. Handcrafted for esp32.
 
-A lean json parser and data tree. Handcrafted for esp32.
+### Use
 
-You can use the [editor on GitHub](https://github.com/oxomoxo/jsl-esp32-json/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+```cpp
+	std::string test;
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+	if(!load_file("/test.json",test)) return;
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+	jsl_parser parser(test);
+	jsl_data* data = parser.parse();
+	if(data != NULL)
+	{
+		ESP_LOGI(PARSER_TEST_LOGTAG, "Data file parsed");
+		std::cout << data->encode(true) << "\n\n";
+		data->fire();
+	}
+	else ESP_LOGE(PARSER_TEST_LOGTAG, "Failed to parse file");
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+The above code snippet
+- Loads a json file into a string
+- creates an instance of the parser
+- parses the file and outputs a data object
+- prints out a json string from the tree
 
-### Jekyll Themes
+### Install
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/oxomoxo/jsl-esp32-json/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```bash
+git clone https://github.com/oxomoxo/jsl-esp32-json.git json
+```
+In component.mk add the folder to the COMPONENT_ADD_INCLUDEDIRS and COMPONENT_SRCDIRS
 
-### Support or Contact
+```mk
+COMPONENT_ADD_INCLUDEDIRS := . \
+	json \
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+COMPONENT_SRCDIRS := . \
+	json \
+```
+
+```bash
+make -j4 flash monitor
+```
 
