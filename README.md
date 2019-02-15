@@ -1,40 +1,102 @@
-## Welcome to GitHub Pages
+# jsl-esp32-json
 
-A lean json parser and data tree. Handcrafted for esp32.
+## A lean C++ json parser and data tree. Handcrafted for esp32
 
-You can use the [editor on GitHub](https://github.com/oxomoxo/jsl-esp32-json/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+### Use
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+```cpp
+	jsl_data_pool::init(100,20,20);
 
-### Markdown
+	std::string test;
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+	if(!load_file("/test.json",test)) return;
 
-```markdown
-Syntax highlighted code block
+	jsl_parser parser(test);
+	jsl_data* data = parser.parse();
+	if(data != NULL)
+	{
+		ESP_LOGI(PARSER_TEST_LOGTAG, "Data file parsed");
+		std::cout << data->encode(true) << "\n\n";
+		data->fire();
+	}
+	else ESP_LOGE(PARSER_TEST_LOGTAG, "Failed to parse file");
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+	jsl_data_pool::init(0,0,0);
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+The above code snippet
+- inits the pool to some value
+- Loads a json file into a string
+- creates an instance of the parser
+- parses the file and outputs a data object
+- prints out a json string from the tree
+- releases the pool
 
-### Jekyll Themes
+the test/test.json file contains the following data :
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/oxomoxo/jsl-esp32-json/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```json
+{
+	"object": {
+		"string": "Some string with a lot of ecaped characters and some UTF-8 characters : \\ \" \/ \f \b \n \r \t \u03A9-Ω-\u03C9-ω",
+		"number_uint": 123456,
+		"number_sint": -123456,
+		"number_real": 1.23456,
+		"number_zreal": 0.123456,
+		"number_sreal": -1.23456,
+		"number_szreal": -0.123456,
+		"number_expo": 1.2345e+6,
+		"number_sexpo": -1.2345e+6,
+		"number_nexpo": 1.2345e-6,
+		"number_snexpo": -1.2345e-6,
+		"true": true,
+		"false": false,
+		"null": null
+	},
+	"array": [
+		"Some string with a lot of ecaped characters and some UTF-8 characters : \\ \" \/ \f \b \n \r \t \u03A9-Ω-\u03C9-ω",
+		123456,
+		-123456,
+		1.23456,
+		0.123456,
+		-1.23456,
+		-0.123456,
+		1.2345e+6,
+		-1.2345e+6,
+		1.2345e-6,
+		-1.2345e-6,
+		true,
+		false,
+		null
+	]
+}
+```
 
-### Support or Contact
+It's aimed at testing all Number permutations and UTF-8 input values (in addition to Object, Array, and simple constants).
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
 
+### Install
+
+```bash
+git clone https://github.com/oxomoxo/jsl-esp32-json.git json
+```
+In component.mk add the folder to the `COMPONENT_ADD_INCLUDEDIRS` and `COMPONENT_SRCDIRS`
+
+```mk
+COMPONENT_ADD_INCLUDEDIRS := . \
+	...
+	json \
+
+COMPONENT_SRCDIRS := . \
+	...
+	json \
+```
+
+Build :
+
+```bash
+make -j4 flash monitor
+```
+
+And, Voila !
+
+Neat isn't it ?
