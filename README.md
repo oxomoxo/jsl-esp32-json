@@ -1,2 +1,2 @@
 # jsl-esp32-json
-A lean json parser and jata tree. Hancrafted for esp32
+A lean json parser and data tree. Handcrafted for esp32.
