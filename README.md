@@ -23,10 +23,12 @@
 ```
 
 The above code snippet
+- inits the pool to some value
 - Loads a json file into a string
 - creates an instance of the parser
 - parses the file and outputs a data object
 - prints out a json string from the tree
+- releases the pool
 
 the test/test.json file contains the following data :
 
