@@ -1,6 +1,10 @@
-# jsl-esp32-json
-
 ## A lean C++ json parser and data tree. Handcrafted for esp32
+
+### What is it
+
+For some project I'm working on I needed a json solution, but the available components were not fit (cjson is C and has a terrible interface, jsmn is not even near a json parser, and some other projects like Niels Lohmann jsoncpp is great but, gasp! 20K loc !!) so I decided to code my own.
+
+It's small (< 2K loc) it's neat and compact.
 
 ### Use
 
