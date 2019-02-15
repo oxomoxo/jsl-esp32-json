@@ -29,13 +29,15 @@ The above code snippet
 ```bash
 git clone https://github.com/oxomoxo/jsl-esp32-json.git json
 ```
-In component.mk add the folder to the COMPONENT_ADD_INCLUDEDIRS and COMPONENT_SRCDIRS
+In component.mk add the folder to the `COMPONENT_ADD_INCLUDEDIRS` and `COMPONENT_SRCDIRS`
 
 ```mk
 COMPONENT_ADD_INCLUDEDIRS := . \
+	...
 	json \
 
 COMPONENT_SRCDIRS := . \
+	...
 	json \
 ```
 
