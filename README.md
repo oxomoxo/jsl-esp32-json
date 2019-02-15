@@ -1,4 +1,4 @@
-## A lean json parser and data tree. Handcrafted for esp32.
+## A lean C++ json parser and data tree. Handcrafted for esp32
 
 ### Use
 
