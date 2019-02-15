@@ -79,6 +79,10 @@ It's aimed at testing all Number permutations and UTF-8 input values (in additio
 ```bash
 git clone https://github.com/oxomoxo/jsl-esp32-json.git json
 ```
+Or
+```bash
+git submodule add https://github.com/oxomoxo/jsl-esp32-json.git json
+```
 In component.mk add the folder to the `COMPONENT_ADD_INCLUDEDIRS` and `COMPONENT_SRCDIRS`
 
 ```mk
