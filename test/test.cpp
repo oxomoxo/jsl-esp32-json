@@ -61,6 +61,8 @@ void test_parser()
 {
 	ESP_LOGI(PARSER_TEST_LOGTAG, "Test PARSER");
 
+	jsl_data_pool::init(100,20,20);
+
 	std::string test;
 
 	if(!load_file("/test.json",test)) return;
@@ -74,4 +76,6 @@ void test_parser()
 		data->fire();
 	}
 	else ESP_LOGE(PARSER_TEST_LOGTAG, "Failed to parse file");
+
+	jsl_data_pool::init(0,0,0);
 }
