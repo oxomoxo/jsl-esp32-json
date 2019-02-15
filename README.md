@@ -39,7 +39,11 @@ COMPONENT_SRCDIRS := . \
 	json \
 ```
 
+Build :
+
 ```bash
 make -j4 flash monitor
 ```
 
+And, Voila !
+Neat isnt it ?
