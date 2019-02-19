@@ -30,8 +30,9 @@
 #include <sstream>
 #include <algorithm>
 
-#define _GLIBCXX_USE_C99
 
+#define DATA_LOGTAG "DATA :"
+#include <esp_log.h>
 
 #include "jsl-data.h"
 
@@ -85,15 +86,46 @@ std::string jsl_data::escape(const std::string& _str)
 			str.push_back('\\');
 			str.push_back('\\');
 			break;
-		case '/':
-			str.push_back('\\');
-			str.push_back('/');
-			break;
+		// case '/':
+		// 	str.push_back('\\');
+		// 	str.push_back('/');
+		// 	break;
 		default:
 			str.push_back(*i);
 		}
 	}
 	return str;
+}
+
+std::string jsl_data::to_string(bool _val)
+{
+	std::ostringstream s;
+	s << ((_val == true) ? "true" : "false");
+	return s.str();
+}
+
+std::string jsl_data::to_string(int32_t _val)
+{
+	std::ostringstream s;
+	s << _val;
+	return s.str();
+}
+
+std::string jsl_data::to_string(double _val)
+{
+	std::ostringstream s;
+	s << _val;
+	return s.str();
+}
+
+std::string jsl_data::to_string(const std::string& _val)
+{
+	return to_string(_val.c_str());
+}
+
+std::string jsl_data::to_string(const char* _val)
+{
+	return "\"" + escape(_val) + "\"";
 }
 
 
@@ -149,29 +181,23 @@ std::string jsl_data_scal::to_string() const
 	{
 	case TYPE_NULL:
 		return "null";
-	case TYPE_INT: {
-		std::ostringstream s;
-		s << m_scal.i;
-		return s.str();
-	}
-	case TYPE_REAL: {
-		std::ostringstream s;
-		s << m_scal.d;
-		return s.str();
-	}
+	case TYPE_INT:
+		return jsl_data::to_string(m_scal.i);
+	case TYPE_REAL:
+		return jsl_data::to_string(m_scal.d);
 	case TYPE_BOOL:
-		return m_scal.b == true ? "true" : "false";
+		return jsl_data::to_string(m_scal.b);
 	case TYPE_STR:
-		return "\"" + escape(m_scal.s) + "\"";
+		return jsl_data::to_string(m_scal.s);
 	default:
-		return empty_str;
+		return "";
 	}
 }
 
-int32_t jsl_data_scal::empty_int;
-double jsl_data_scal::empty_double;
-bool jsl_data_scal::empty_bool;
-std::string jsl_data_scal::empty_str;
+const int32_t jsl_data_scal::empty_int = 0;
+const double jsl_data_scal::empty_double = 0.;
+const bool jsl_data_scal::empty_bool = false;
+const std::string jsl_data_scal::empty_str;
 
 
 
@@ -204,32 +230,35 @@ void jsl_data_dict::removeChild(const jsl_data& _child)
 	}
 }
 
-std::string jsl_data_dict::encode(bool _pretty, std::string _tabs) const
+void jsl_data_dict::encode(std::ostream& _out, bool _pretty, std::string _tabs) const
 {
-	std::string ret("{");
-	const char* nl = "\n";
+	_out << "{";
+
+	char nl = '\0', sp = '\0';
+
 	if(_pretty)
 	{
-		ret += nl;
+		sp = ' ';
 		_tabs += '\t';
+		_out << (nl = '\n');
 	}
 
 	for(auto i = m_container.begin(); i != m_container.end(); ++i)
 	{
-		ret += _tabs + '\"' + escape(i->first) + '\"';
-		ret += ":";
+		_out << _tabs << '\"' << escape(i->first) << "\":" << sp;
 
-		if(_pretty) ret += " ";
+		i->second->encode(_out,_pretty,_tabs);
 
-		ret += i->second->encode(_pretty,_tabs);
+		if(i != std::prev(m_container.end())) _out << ',';
 
-		if(i != std::prev(m_container.end())) ret += ',';
-		if(_pretty) ret += '\n';
+		_out << nl;
 	}
+
 	if(_pretty) _tabs.pop_back();
-	
-	ret += _tabs + "}";
-	return ret;
+
+	_out << _tabs << "}";
+
+	if(_pretty && _tabs.size() == 0) _out << nl;
 }
 
 
@@ -263,27 +292,34 @@ void jsl_data_vect::removeChild(const jsl_data& _child)
 	}
 }
 
-std::string jsl_data_vect::encode(bool _pretty, std::string _tabs) const
+void jsl_data_vect::encode(std::ostream& _out, bool _pretty, std::string _tabs) const
 {
-	std::string ret("[");
-	const char* nl = "\n";
+	_out << "{";
+
+	char nl = '\0';
+
 	if(_pretty)
 	{
-		ret += nl;
 		_tabs += '\t';
+		_out << (nl = '\n');
 	}
 
 	for(auto i = m_container.begin(); i != m_container.end(); ++i)
 	{
-		ret += _tabs + (*i)->encode(_pretty,_tabs);
+		_out << _tabs;
 
-		if(i != std::prev(m_container.end())) ret += ',';
-		if(_pretty) ret += '\n';
+		(*i)->encode(_out,_pretty,_tabs);
+
+		if(i != std::prev(m_container.end())) _out << ',';
+
+		_out << nl;
 	}
+
 	if(_pretty) _tabs.pop_back();
-	
-	ret += _tabs + "]";
-	return ret;
+
+	_out << _tabs << "]";
+
+	if(_pretty && _tabs.size() == 0) _out << nl;
 }
 
 
@@ -402,7 +438,10 @@ void jsl_data_pool::fire(jsl_data_dict& _data)
 {
 	for(auto child = _data.begin(); child != _data.end(); ++child)
 	{
-		child->second->fire();
+		if(child->second != NULL)
+		{
+			child->second->fire();
+		}
 	}
 	_data.clear();
 	if(std::find(m_dicts_for_hire.begin(),m_dicts_for_hire.end(),&_data) == m_dicts_for_hire.end())
@@ -427,7 +466,10 @@ void jsl_data_pool::fire(jsl_data_vect& _data)
 {
 	for(auto child = _data.begin(); child != _data.end(); ++child)
 	{
-		(*child)->fire();
+		if((*child) != NULL)
+		{
+			(*child)->fire();
+		}
 	}
 	_data.clear();
 	if(std::find(m_vects_for_hire.begin(),m_vects_for_hire.end(),&_data) == m_vects_for_hire.end())
@@ -476,7 +518,7 @@ void test_data()
 	// ESP_LOGI(LOGTAG, "Data 4 : DICT");
 	// jsl_data_dict& dict = *((jsl_data_dict*)jsl_data_pool::hire(jsl_data::TYPE_DICT));
 	jsl_data_dict& dict = *jsl_data_pool::hire_dict();
- 
+
 	dict.set_prop("i",i);
 	// dict.set_prop("d",d);
 	dict.set_prop("b",b);

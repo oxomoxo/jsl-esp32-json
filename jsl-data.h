@@ -32,9 +32,6 @@
 #include <map>
 
 
-// #define DATA_LOGTAG "DATA :"
-// #include <esp_log.h>
-
 
 class jsl_data
 {
@@ -69,17 +66,25 @@ public :
 		m_parent = &_parent;
 	}
 
-	virtual std::string encode(bool _pretty = false, std::string _tabs = "") const
+	virtual void encode(std::ostream& _out, bool _pretty = false, std::string _tabs = "") const
 	{
-		return "null";
+		_out << "null";
 	}
 
 	virtual ~jsl_data();
+
+	static std::string to_string(bool _val);
+	static std::string to_string(int32_t _val);
+	static std::string to_string(double _val);
+	static std::string to_string(const std::string& _val);
+	static std::string to_string(const char* _val);
 
 	virtual std::string to_string() const { return "null"; };
 
 	inline virtual void clear() { m_parent = NULL; }
 	inline virtual void fire() {}
+
+	static std::string escape(const std::string& _str);
 
 protected :
 
@@ -102,7 +107,6 @@ protected :
 
 	typedef jsl_data* cont_type;
 
-	static std::string escape(const std::string& _str);
 };
 
 
@@ -253,14 +257,16 @@ public:
 		return m_type == TYPE_STR && m_scal.s == std::string(_s);
 	}
 
-	operator const int32_t&() const
+	operator int32_t() const
 	{
 		if(m_type == TYPE_INT) return m_scal.i;
+		if(m_type == TYPE_REAL) return (int32_t)(m_scal.d + 0.5);
 		return empty_int;
 	}
-	operator const double&() const
+	operator double() const
 	{
 		if(m_type == TYPE_REAL) return m_scal.d;
+		if(m_type == TYPE_INT) return m_scal.i;
 		return empty_double;
 	}
 	operator const bool&() const
@@ -273,6 +279,11 @@ public:
 		if(m_type == TYPE_STR) return m_scal.s;
 		return empty_str;
 	}
+	operator const char* () const
+	{
+		if(m_type == TYPE_STR) return m_scal.s.c_str();
+		return empty_str.c_str();
+	}
 
 	jsl_data_scal& from_string(const std::string& _str)
 	{
@@ -282,9 +293,10 @@ public:
 
 	virtual std::string to_string() const;
 
-	virtual std::string encode(bool _pretty = false, std::string _tabs = "") const
+	virtual void encode(std::ostream& _out, bool _pretty = false, std::string _tabs = "") const
 	{
-		return to_string();
+		_out << to_string();
+		if(_pretty && _tabs.size() == 0) _out << "\n";
 	}
 
 protected:
@@ -333,10 +345,10 @@ protected:
 		}
 	}
 
-	static int32_t empty_int;
-	static double empty_double;
-	static bool empty_bool;
-	static std::string empty_str;
+	const static int32_t empty_int;
+	const static double empty_double;
+	const static bool empty_bool;
+	const static std::string empty_str;
 };
 
 
@@ -344,6 +356,11 @@ protected:
 class jsl_data_dict : public jsl_data
 {
 public:
+
+	jsl_data_dict()
+	{
+		m_type = TYPE_DICT;
+	}
 
 	typedef std::map<std::string, cont_type> dict_t;
 	typedef dict_t::iterator dict_i;
@@ -357,6 +374,8 @@ public:
 		return m_container[_key];
 	}
 
+	dict_i find(const dict_t::key_type& _key) { return find(_key.c_str()); }
+	dict_i find(const char* _key) { return m_container.find(_key); }
 	dict_i begin() { return m_container.begin(); }
 	dict_i end() { return m_container.end(); }
 
@@ -372,10 +391,10 @@ public:
 
 	virtual ~jsl_data_dict();
 
-	virtual std::string encode(bool _pretty = false, std::string _tabs = "") const;
+	virtual void encode(std::ostream& _out, bool _pretty = false, std::string _tabs = "") const;
 
-	inline virtual void clear();
-	inline virtual void fire();
+	virtual void clear();
+	virtual void fire();
 
 protected:
 
@@ -389,6 +408,11 @@ protected:
 class jsl_data_vect : public jsl_data
 {
 public:
+
+	jsl_data_vect()
+	{
+		m_type = TYPE_VECT;
+	}
 
 	typedef std::vector<cont_type> vect_t;
 	typedef vect_t::iterator vect_i;
@@ -409,10 +433,10 @@ public:
 
 	virtual ~jsl_data_vect();
 
-	virtual std::string encode(bool _pretty = false, std::string _tabs = "") const;
+	virtual void encode(std::ostream& _out, bool _pretty = false, std::string _tabs = "") const;
 
-	inline virtual void clear();
-	inline virtual void fire();
+	virtual void clear();
+	virtual void fire();
 
 protected:
 

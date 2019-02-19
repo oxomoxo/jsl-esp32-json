@@ -23,6 +23,8 @@
 
 
 
+#define PARSER_LOGTAG "PARSER :"
+#include <esp_log.h>
 
 #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
 
@@ -105,7 +107,7 @@ jsl_data_dict* jsl_parser::eat_dict()
 		case '}': // end
 			++m_psrc;
 			return dict;
-		default: 
+		default:
 			// ESP_LOGE(PARSER_LOGTAG, "unexpected char [%c]",*m_psrc);
 			goto abort; // invalid src
 		}
@@ -166,7 +168,7 @@ jsl_data_vect* jsl_parser::eat_vect()
 		case ']': // end
 			++m_psrc;
 			return vect;
-		default: 
+		default:
 			// ESP_LOGE(PARSER_LOGTAG, "unexpected char [%c]",*m_psrc);
 			goto abort; // invalid src
 		}

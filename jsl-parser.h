@@ -30,9 +30,6 @@
 
 #include "jsl-data.h"
 
-// #define PARSER_LOGTAG "PARSER :"
-// #include <esp_log.h>
-
 
 
 class jsl_parser
