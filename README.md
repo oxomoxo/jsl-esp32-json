@@ -1,27 +1,33 @@
-# jsl-esp32-json
-
 ## A lean C++ json parser and data tree. Handcrafted for esp32
+
+### What is it
+
+For some project I'm working on I needed a json solution, but the available components were not fit (cjson is C and has a terrible interface, jsmn is not even near a json parser, and some other projects like Niels Lohmann jsoncpp is great but, gasp! 20K loc !!) so I decided to code my own.
+
+It's small (< 2K loc) it's neat and compact.
 
 ### Use
 
 ```cpp
-	jsl_data_pool::init(100,20,20);
+#include "json/jsl-parser.h"
 
-	std::string test;
+jsl_data_pool::init(100,20,20);
 
-	if(!load_file("/test.json",test)) return;
+std::string test;
 
-	jsl_parser parser(test);
-	jsl_data* data = parser.parse();
-	if(data != NULL)
-	{
-		ESP_LOGI(PARSER_TEST_LOGTAG, "Data file parsed");
-		std::cout << data->encode(true) << "\n\n";
-		data->fire();
-	}
-	else ESP_LOGE(PARSER_TEST_LOGTAG, "Failed to parse file");
+if(!load_file("/test.json",test)) return;
 
-	jsl_data_pool::init(0,0,0);
+jsl_parser parser(test);
+jsl_data* data = parser.parse();
+if(data != NULL)
+{
+	ESP_LOGI(PARSER_TEST_LOGTAG, "Data file parsed");
+	std::cout << data->encode(true) << "\n\n";
+	data->fire();
+}
+else ESP_LOGE(PARSER_TEST_LOGTAG, "Failed to parse file");
+
+jsl_data_pool::init(0,0,0);
 ```
 
 The above code snippet
@@ -78,6 +84,10 @@ It's aimed at testing all Number permutations and UTF-8 input values (in additio
 
 ```bash
 git clone https://github.com/oxomoxo/jsl-esp32-json.git json
+```
+Or
+```bash
+git submodule add https://github.com/oxomoxo/jsl-esp32-json.git json
 ```
 In component.mk add the folder to the `COMPONENT_ADD_INCLUDEDIRS` and `COMPONENT_SRCDIRS`
 
