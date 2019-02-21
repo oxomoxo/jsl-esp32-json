@@ -524,8 +524,8 @@ bool jsl_parser::unescape(std::string& _str)
 		break;
 	case 'u':
 		++m_psrc;
-		std::string utf(m_psrc,m_psrc+4);
-		uint32_t ch = std::strtol(utf.c_str(),NULL,16);
+		std::string hex(m_psrc,m_psrc+4);
+		std::string::value_type ch = std::strtol(hex.c_str(),NULL,16);
 		utf8_str(ch,_str);
 		m_psrc+=4;
 		break;
