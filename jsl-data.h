@@ -448,7 +448,7 @@ public:
 		auto f = m_container.find(_name);
 		if(
 			f != m_container.end() &&
-			f->second->type() == TYPE_STR
+			f->second->type() == TYPE_DICT
 		){
 			_val = (jsl_data_dict*)f->second;
 			return true;
@@ -462,7 +462,7 @@ public:
 		auto f = m_container.find(_name);
 		if(
 			f != m_container.end() &&
-			f->second->type() == TYPE_STR
+			f->second->type() == TYPE_VECT
 		){
 			_val = (jsl_data_vect*)f->second;
 			return true;
@@ -565,7 +565,7 @@ public:
 		_val = NULL;
 		if(
 			_i >= 0 && _i < m_container.size() &&
-			m_container[_i]->type() == TYPE_STR
+			m_container[_i]->type() == TYPE_DICT
 		){
 			_val = (jsl_data_dict*)m_container[_i];
 			return true;
@@ -578,7 +578,7 @@ public:
 		_val = NULL;
 		if(
 			_i >= 0 && _i < m_container.size() &&
-			m_container[_i]->type() == TYPE_STR
+			m_container[_i]->type() == TYPE_VECT
 		){
 			_val = (jsl_data_vect*)m_container[_i];
 			return true;
