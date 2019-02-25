@@ -41,7 +41,7 @@ public:
 
 	jsl_parser(const std::string& _src) : m_src(_src) {}
 
-	jsl_data* parse();
+	jsl_data_dict* parse();
 
 protected:
 
@@ -79,7 +79,7 @@ void test_parser()
 	if(!load_file("/config/test.json",str)) return;
 
 	jsl_parser parser(str);
-	jsl_data* data = parser.parse();
+	jsl_data_dict* data = parser.parse();
 	if(data != NULL)
 	{
 		ESP_LOGI(LOGTAG, "Data file parsed");

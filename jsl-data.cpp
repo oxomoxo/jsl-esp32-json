@@ -24,7 +24,7 @@
 
 
 
-#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
+// #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
 
 #include <cstdlib>
 #include <sstream>
@@ -489,33 +489,33 @@ std::vector<jsl_data_vect*>	jsl_data_pool::m_vects_for_hire;
 
 void test_data()
 {
-	// ESP_LOGI(LOGTAG, "Test DATA");
+	ESP_LOGI(LOGTAG, "Test DATA");
 
-	// ESP_LOGI(LOGTAG, "Data 2 : BOOL");
+	ESP_LOGI(LOGTAG, "Data 2 : BOOL");
 	jsl_data_scal& b = *jsl_data_pool::hire(true);
-	std::cout << b.encode() << "\n";
+	b.encode(std::cout,true);// << "\n";
 
-	// ESP_LOGI(LOGTAG, "Data 1 : REAL");
+	ESP_LOGI(LOGTAG, "Data 1 : REAL");
 	jsl_data_scal& d = *jsl_data_pool::hire(2.3);
-	std::cout << d.encode() << "\n";
+	d.encode(std::cout,true);// << "\n";
 
-	// ESP_LOGI(LOGTAG, "Data 0 : INT");
+	ESP_LOGI(LOGTAG, "Data 0 : INT");
 	jsl_data_scal& i = *jsl_data_pool::hire(1);
-	std::cout << i.encode() << "\n";
+	i.encode(std::cout,true);// << "\n";
 
-	// ESP_LOGI(LOGTAG, "Data 3 : STR");
+	ESP_LOGI(LOGTAG, "Data 3 : STR");
 	jsl_data_scal& s = *jsl_data_pool::hire("ok éô à");
-	std::cout << s.encode() << "\n";
+	s.encode(std::cout,true);// << "\n";
 
-	// ESP_LOGI(LOGTAG, "Data 2 : Retype to STR");
+	ESP_LOGI(LOGTAG, "Data 2 : Retype to STR");
 	b = "b to s"; // re-type test
-	std::cout << b.encode() << "\n";
+	b.encode(std::cout,true);// << "\n";
 
-	// ESP_LOGI(LOGTAG, "Data 2 : Retype to BOOL");
+	ESP_LOGI(LOGTAG, "Data 2 : Retype to BOOL");
 	b = true; // re-type test
-	std::cout << b.encode() << "\n";
+	b.encode(std::cout,true);// << "\n";
 
-	// ESP_LOGI(LOGTAG, "Data 4 : DICT");
+	ESP_LOGI(LOGTAG, "Data 4 : DICT");
 	// jsl_data_dict& dict = *((jsl_data_dict*)jsl_data_pool::hire(jsl_data::TYPE_DICT));
 	jsl_data_dict& dict = *jsl_data_pool::hire_dict();
 
@@ -524,7 +524,7 @@ void test_data()
 	dict.set_prop("b",b);
 	dict.set_prop("s",s);
 
-	// ESP_LOGI(LOGTAG, "Data 5 : VECT");
+	ESP_LOGI(LOGTAG, "Data 5 : VECT");
 	// jsl_data_vect& vect = *((jsl_data_vect*)jsl_data_pool::hire(jsl_data::TYPE_VECT));
 	jsl_data_vect& vect = *jsl_data_pool::hire_vect();
 
@@ -533,18 +533,18 @@ void test_data()
 	// vect.push_back(b);
 	// vect.push_back(s);
 
-	// ESP_LOGI(LOGTAG, "Data 2 : From STR");
+	ESP_LOGI(LOGTAG, "Data 2 : From STR");
 	d.from_string("2.3456");
 
-	// ESP_LOGI(LOGTAG, "Data 4 : VECT Child");
+	ESP_LOGI(LOGTAG, "Data 4 : VECT Child");
 	dict.set_prop("v",vect);
-	// ESP_LOGI(LOGTAG, "Data 4 : ENCODE");
-	std::cout << dict.encode(true) << "\n\n";
+	ESP_LOGI(LOGTAG, "Data 4 : ENCODE");
+	dict.encode(std::cout,true);// << "\n\n";
 
 	// vect.push_back(&dict);
-	// std::cout << vect.encode();
+	// vect.encode(std::cout,true);
 
-	// ESP_LOGI(LOGTAG, "Data FIRE");
+	ESP_LOGI(LOGTAG, "Data FIRE");
 
 	jsl_data_pool::fire(i);
 	jsl_data_pool::fire(d);

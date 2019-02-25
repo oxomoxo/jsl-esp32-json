@@ -31,7 +31,8 @@
 #include <vector>
 #include <map>
 
-
+class jsl_data_dict;
+class jsl_data_vect;
 
 class jsl_data
 {
@@ -269,12 +270,12 @@ public:
 		if(m_type == TYPE_INT) return m_scal.i;
 		return empty_double;
 	}
-	operator const bool&() const
+	operator bool() const
 	{
 		if(m_type == TYPE_BOOL) return m_scal.b;
 		return empty_bool;
 	}
-	operator const std::string& () const
+	operator std::string () const
 	{
 		if(m_type == TYPE_STR) return m_scal.s;
 		return empty_str;
@@ -389,6 +390,86 @@ public:
 		_item.setParent(*this);
 	}
 
+	bool get(const char* _name, int32_t& _val) const
+	{
+		auto f = m_container.find(_name);
+		if(
+			f != m_container.end() &&
+			f->second->type() == TYPE_INT
+		){
+			_val = (int32_t)*((jsl_data_scal*)f->second);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(const char* _name, double& _val) const
+	{
+		auto f = m_container.find(_name);
+		if(
+			f != m_container.end() &&
+			f->second->type() == TYPE_REAL
+		){
+			_val = (double)*((jsl_data_scal*)f->second);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(const char* _name, bool& _val) const
+	{
+		auto f = m_container.find(_name);
+		if(
+			f != m_container.end() &&
+			f->second->type() == TYPE_BOOL
+		){
+			_val = (bool)*((jsl_data_scal*)f->second);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(const char* _name, std::string& _val) const
+	{
+		auto f = m_container.find(_name);
+		if(
+			f != m_container.end() &&
+			f->second->type() == TYPE_STR
+		){
+			_val = (const std::string&)*((jsl_data_scal*)f->second);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(const char* _name, jsl_data_dict*& _val) const
+	{
+		_val = NULL;
+		auto f = m_container.find(_name);
+		if(
+			f != m_container.end() &&
+			f->second->type() == TYPE_STR
+		){
+			_val = (jsl_data_dict*)f->second;
+			return true;
+		}
+		return false;
+	}
+
+	bool get(const char* _name, jsl_data_vect*& _val) const
+	{
+		_val = NULL;
+		auto f = m_container.find(_name);
+		if(
+			f != m_container.end() &&
+			f->second->type() == TYPE_STR
+		){
+			_val = (jsl_data_vect*)f->second;
+			return true;
+		}
+		return false;
+	}
+
 	virtual ~jsl_data_dict();
 
 	virtual void encode(std::ostream& _out, bool _pretty = false, std::string _tabs = "") const;
@@ -429,6 +510,80 @@ public:
 	{
 		m_container.push_back(&_item);
 		_item.setParent(*this);
+	}
+
+	bool get(int32_t _i, int32_t& _val) const
+	{
+		if(
+			_i >= 0 && _i < m_container.size() &&
+			m_container[_i]->type() == TYPE_INT
+		){
+			_val = (int32_t)*((jsl_data_scal*)m_container[_i]);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(int32_t _i, double& _val) const
+	{
+		if(
+			_i >= 0 && _i < m_container.size() &&
+			m_container[_i]->type() == TYPE_REAL
+		){
+			_val = (double)*((jsl_data_scal*)m_container[_i]);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(int32_t _i, bool& _val) const
+	{
+		if(
+			_i >= 0 && _i < m_container.size() &&
+			m_container[_i]->type() == TYPE_BOOL
+		){
+			_val = (bool)*((jsl_data_scal*)m_container[_i]);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(int32_t _i, std::string& _val) const
+	{
+		if(
+			_i >= 0 && _i < m_container.size() &&
+			m_container[_i]->type() == TYPE_STR
+		){
+			_val = (const std::string&)*((jsl_data_scal*)m_container[_i]);
+			return true;
+		}
+		return false;
+	}
+
+	bool get(int32_t _i, jsl_data_dict*& _val) const
+	{
+		_val = NULL;
+		if(
+			_i >= 0 && _i < m_container.size() &&
+			m_container[_i]->type() == TYPE_STR
+		){
+			_val = (jsl_data_dict*)m_container[_i];
+			return true;
+		}
+		return false;
+	}
+
+	bool get(int32_t _i, jsl_data_vect*& _val) const
+	{
+		_val = NULL;
+		if(
+			_i >= 0 && _i < m_container.size() &&
+			m_container[_i]->type() == TYPE_STR
+		){
+			_val = (jsl_data_vect*)m_container[_i];
+			return true;
+		}
+		return false;
 	}
 
 	virtual ~jsl_data_vect();

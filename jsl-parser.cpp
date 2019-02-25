@@ -26,12 +26,12 @@
 #define PARSER_LOGTAG "PARSER :"
 #include <esp_log.h>
 
-#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
+// #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
 
 #include <iostream>
 #include "json/jsl-parser.h"
 
-jsl_data* jsl_parser::parse()
+jsl_data_dict* jsl_parser::parse()
 {
 	m_psrc = m_src.begin();
 	return eat_dict();

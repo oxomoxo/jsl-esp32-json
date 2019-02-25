@@ -18,7 +18,7 @@ std::string test;
 if(!load_file("/test.json",test)) return;
 
 jsl_parser parser(test);
-jsl_data* data = parser.parse();
+jsl_data_dict* data = parser.parse();
 if(data != NULL)
 {
 	ESP_LOGI(PARSER_TEST_LOGTAG, "Data file parsed");
