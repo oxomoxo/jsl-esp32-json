@@ -27,6 +27,7 @@
 #define JSL_PARSER_H
 
 #include <string>
+#include <fstream>
 
 #include "jsl-data.h"
 
@@ -36,10 +37,9 @@ class jsl_parser
 {
 public:
 
-	typedef const std::string& src_t;
-	typedef std::string::const_iterator src_i;
+	typedef std::istream& src_t;
 
-	jsl_parser(const std::string& _src) : m_src(_src) {}
+	jsl_parser(src_t& _src) : m_src(_src) {}
 
 	jsl_data_dict* parse();
 
@@ -60,11 +60,10 @@ protected:
 	bool unescape(std::string& _str); //
 	void utf8_str(uint32_t _char, std::string& _str);
 
-	inline bool is_space(src_i _c);
+	inline bool is_space(uint8_t _c);
 	inline bool eat_space(); // returns true on EOF
 
 	const src_t m_src;
-	src_i m_psrc;
 };
 
 #endif // #ifndef JSL_PARSER_H
