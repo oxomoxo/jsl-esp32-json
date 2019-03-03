@@ -53,10 +53,10 @@ public :
 		m_parent(NULL)
 	{}
 
-	operator node_type_t () const { return m_type; }
-	node_type_t type() const { return m_type; }
+	inline operator node_type_t () const { return m_type; }
+	inline node_type_t type() const { return m_type; }
 
-	jsl_data* parent() const { return m_parent; }
+	inline jsl_data* parent() const { return m_parent; }
 
 	void setParent(jsl_data& _parent)
 	{
@@ -74,13 +74,13 @@ public :
 
 	virtual ~jsl_data();
 
+	virtual std::string to_string() const { return "null"; };
+
 	static std::string to_string(bool _val);
 	static std::string to_string(int32_t _val);
 	static std::string to_string(double _val);
 	static std::string to_string(const std::string& _val);
 	static std::string to_string(const char* _val);
-
-	virtual std::string to_string() const { return "null"; };
 
 	inline virtual void clear() { m_parent = NULL; }
 	inline virtual void fire() {}
@@ -376,9 +376,11 @@ public:
 	}
 
 	dict_i find(const dict_t::key_type& _key) { return find(_key.c_str()); }
-	dict_i find(const char* _key) { return m_container.find(_key); }
-	dict_i begin() { return m_container.begin(); }
-	dict_i end() { return m_container.end(); }
+	inline dict_i find(const char* _key) { return m_container.find(_key); }
+
+ 	inline int32_t size() { return m_container.size(); }
+	inline dict_i begin() { return m_container.begin(); }
+	inline dict_i end() { return m_container.end(); }
 
 	void set_prop(const dict_t::key_type& _key, jsl_data& _item)
 	{
@@ -394,9 +396,10 @@ public:
 	{
 		auto f = m_container.find(_name);
 		if(
-			f != m_container.end() &&
+			f != m_container.end() && (
+			f->second->type() == TYPE_REAL ||
 			f->second->type() == TYPE_INT
-		){
+		)){
 			_val = (int32_t)*((jsl_data_scal*)f->second);
 			return true;
 		}
@@ -407,9 +410,10 @@ public:
 	{
 		auto f = m_container.find(_name);
 		if(
-			f != m_container.end() &&
+			f != m_container.end() && (
+			f->second->type() == TYPE_INT ||
 			f->second->type() == TYPE_REAL
-		){
+		)){
 			_val = (double)*((jsl_data_scal*)f->second);
 			return true;
 		}
@@ -503,8 +507,9 @@ public:
 		return m_container[_key];
 	}
 
-	vect_i begin() { return m_container.begin(); }
-	vect_i end() { return m_container.end(); }
+	inline int32_t size() { return m_container.size(); }
+	inline vect_i begin() { return m_container.begin(); }
+	inline vect_i end() { return m_container.end(); }
 
 	void push_back(jsl_data& _item)
 	{
@@ -515,9 +520,10 @@ public:
 	bool get(int32_t _i, int32_t& _val) const
 	{
 		if(
-			_i >= 0 && _i < m_container.size() &&
+			_i >= 0 && _i < m_container.size() && (
+			m_container[_i]->type() == TYPE_REAL ||
 			m_container[_i]->type() == TYPE_INT
-		){
+		)){
 			_val = (int32_t)*((jsl_data_scal*)m_container[_i]);
 			return true;
 		}
@@ -527,9 +533,10 @@ public:
 	bool get(int32_t _i, double& _val) const
 	{
 		if(
-			_i >= 0 && _i < m_container.size() &&
+			_i >= 0 && _i < m_container.size() && (
+			m_container[_i]->type() == TYPE_INT ||
 			m_container[_i]->type() == TYPE_REAL
-		){
+		)){
 			_val = (double)*((jsl_data_scal*)m_container[_i]);
 			return true;
 		}

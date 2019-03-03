@@ -26,7 +26,7 @@
 #define PARSER_LOGTAG "PARSER :"
 #include <esp_log.h>
 
-#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
+// #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
 
 #include <iostream>
 #include "json/jsl-parser.h"
