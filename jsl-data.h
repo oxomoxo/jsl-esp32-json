@@ -50,7 +50,7 @@ public :
 
 	jsl_data() :
 		m_type(TYPE_NULL),
-		m_parent(NULL)
+		m_parent(nullptr)
 	{}
 
 	inline operator node_type_t () const { return m_type; }
@@ -60,7 +60,7 @@ public :
 
 	void setParent(jsl_data& _parent)
 	{
-		if(m_parent != NULL && m_parent != &_parent)
+		if(m_parent != nullptr && m_parent != &_parent)
 		{
 			m_parent->removeChild(*this);
 		}
@@ -82,7 +82,7 @@ public :
 	static std::string to_string(const std::string& _val);
 	static std::string to_string(const char* _val);
 
-	inline virtual void clear() { m_parent = NULL; }
+	inline virtual void clear() { m_parent = nullptr; }
 	inline virtual void fire() {}
 
 	static std::string escape(const std::string& _str);
@@ -93,7 +93,7 @@ protected :
 
 	jsl_data(node_type_t _type) :
 		m_type(_type),
-		m_parent(NULL)
+		m_parent(nullptr)
 	{}
 
 	jsl_data(node_type_t _type, jsl_data& _parent) :
@@ -448,7 +448,7 @@ public:
 
 	bool get(const char* _name, jsl_data_dict*& _val) const
 	{
-		_val = NULL;
+		_val = nullptr;
 		auto f = m_container.find(_name);
 		if(
 			f != m_container.end() &&
@@ -462,7 +462,7 @@ public:
 
 	bool get(const char* _name, jsl_data_vect*& _val) const
 	{
-		_val = NULL;
+		_val = nullptr;
 		auto f = m_container.find(_name);
 		if(
 			f != m_container.end() &&
@@ -569,7 +569,7 @@ public:
 
 	bool get(int32_t _i, jsl_data_dict*& _val) const
 	{
-		_val = NULL;
+		_val = nullptr;
 		if(
 			_i >= 0 && _i < m_container.size() &&
 			m_container[_i]->type() == TYPE_DICT
@@ -582,7 +582,7 @@ public:
 
 	bool get(int32_t _i, jsl_data_vect*& _val) const
 	{
-		_val = NULL;
+		_val = nullptr;
 		if(
 			_i >= 0 && _i < m_container.size() &&
 			m_container[_i]->type() == TYPE_VECT

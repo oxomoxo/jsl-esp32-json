@@ -23,7 +23,7 @@
 
 
 
-#define PARSER_LOGTAG "PARSER :"
+constexpr char PARSER_LOGTAG[] = "PARSER :";
 #include <esp_log.h>
 
 // #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
@@ -42,20 +42,20 @@ jsl_data_dict* jsl_parser::eat_dict()
 	if(m_src.peek() != '{')
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : wrong init char [%c]",m_src.peek());
-		return NULL;
+		return nullptr;
 	}
 
 	m_src.get();
 
 	jsl_data_dict* dict = jsl_data_pool::hire_dict();
-	if(dict == NULL)
+	if(dict == nullptr)
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : hire dict fail");
-		return NULL;
+		return nullptr;
 	}
 
 	std::string pname;
-	jsl_data* pvalue = NULL;
+	jsl_data* pvalue = nullptr;
 
 	while(!m_src.eof())
 	{
@@ -93,7 +93,7 @@ jsl_data_dict* jsl_parser::eat_dict()
 				goto abort;
 			}
 			dict->set_prop(pname,*pvalue);
-			pvalue = NULL;
+			pvalue = nullptr;
 			pname = "";
 			break;
 		case ',': // next
@@ -114,13 +114,13 @@ jsl_data_dict* jsl_parser::eat_dict()
 	}
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : eat_dict unexpected EOF");
-	return NULL; // EOF
+	return nullptr; // EOF
 
 abort:
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : eat_dict aborted");
 	jsl_data_pool::fire(*dict);
-	return NULL; // aborted
+	return nullptr; // aborted
 }
 
 jsl_data_vect* jsl_parser::eat_vect()
@@ -128,19 +128,19 @@ jsl_data_vect* jsl_parser::eat_vect()
 	if(m_src.peek() != '[')
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : wrong init char [%c]",m_src.peek());
-		return NULL;
+		return nullptr;
 	}
 
 	m_src.get();
 
 	jsl_data_vect* vect = jsl_data_pool::hire_vect();
-	if(vect == NULL)
+	if(vect == nullptr)
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : hire vect fail");
-		return NULL;
+		return nullptr;
 	}
 
-	jsl_data* pvalue = NULL;
+	jsl_data* pvalue = nullptr;
 
 	while(!m_src.eof())
 	{
@@ -152,7 +152,7 @@ jsl_data_vect* jsl_parser::eat_vect()
 		}
 
 		vect->push_back(*pvalue);
-		pvalue = NULL;
+		pvalue = nullptr;
 
 		if(eat_space())
 		{
@@ -176,13 +176,13 @@ jsl_data_vect* jsl_parser::eat_vect()
 	}
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : eat_vect unexpected EOF");
-	return NULL; // EOF
+	return nullptr; // EOF
 
 abort:
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : eat_vect aborted");
 	jsl_data_pool::fire(*vect);
-	return NULL; // aborted
+	return nullptr; // aborted
 }
 
 jsl_data* jsl_parser::eat_value()
@@ -190,7 +190,7 @@ jsl_data* jsl_parser::eat_value()
 	if(eat_space())
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : no food");
-		return NULL;
+		return nullptr;
 	} // EOF
 
 	switch(m_src.peek())
@@ -223,7 +223,7 @@ jsl_data* jsl_parser::eat_value()
 	case '.':
 		return eat_num();
 
-	default: return NULL; // invalid src
+	default: return nullptr; // invalid src
 	}
 }
 
@@ -232,7 +232,7 @@ jsl_data_scal* jsl_parser::eat_null()
 	if(eat_space())
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : no food");
-		return NULL;
+		return nullptr;
 	} // EOF
 
 	char buf[5] = {};
@@ -247,14 +247,14 @@ jsl_data_scal* jsl_parser::eat_null()
 
 	){
 
-		return jsl_data_pool::hire_scal(); // defaults to NULL
+		return jsl_data_pool::hire_scal(); // defaults to nullptr
 
 	}
 
 	m_src.seekg(-4,std::istream::cur);
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : wrong null chars [%s]",buf);
-	return NULL;
+	return nullptr;
 
 }
 
@@ -263,7 +263,7 @@ jsl_data_scal* jsl_parser::eat_false()
 	if(eat_space())
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : no food");
-		return NULL;
+		return nullptr;
 	} // EOF
 
 	char buf[6] = {};
@@ -286,7 +286,7 @@ jsl_data_scal* jsl_parser::eat_false()
 	m_src.seekg(-5,std::istream::cur);
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : wrong false chars [%s]",buf);
-	return NULL;
+	return nullptr;
 
 }
 
@@ -295,7 +295,7 @@ jsl_data_scal* jsl_parser::eat_true()
 	if(eat_space())
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : no food");
-		return NULL;
+		return nullptr;
 	} // EOF
 
 	char buf[5] = {};
@@ -317,7 +317,7 @@ jsl_data_scal* jsl_parser::eat_true()
 	m_src.seekg(-4,std::istream::cur);
 
 	ESP_LOGE(PARSER_LOGTAG, "Error : wrong true chars [%s]",buf);
-	return NULL;
+	return nullptr;
 
 }
 
@@ -326,7 +326,7 @@ jsl_data_scal* jsl_parser::eat_num()
 	if(eat_space())
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : no food");
-		return NULL;
+		return nullptr;
 	} // EOF
 
 	typedef enum
@@ -357,7 +357,7 @@ jsl_data_scal* jsl_parser::eat_num()
 			if(st != STATE_START && st != STATE_EXPOS)
 			{
 				ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [-] : %d",st);
-				return NULL;
+				return nullptr;
 			}
 			// set new state depending on source
 			if(st == STATE_EXPOS) st = STATE_EXPO;
@@ -368,7 +368,7 @@ jsl_data_scal* jsl_parser::eat_num()
 			if(st != STATE_ZERO && st != STATE_INTG)
 			{
 				ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [.] : %d",st);
-				return NULL;
+				return nullptr;
 			}
 			// set new state depending on source
 			st = STATE_REALS;
@@ -379,7 +379,7 @@ jsl_data_scal* jsl_parser::eat_num()
 			if(st != STATE_INTG && st != STATE_REAL)
 			{
 				ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [E] : %d",st);
-				return NULL;
+				return nullptr;
 			}
 			// set new state depending on source
 			st = STATE_EXPOS;
@@ -389,7 +389,7 @@ jsl_data_scal* jsl_parser::eat_num()
 			if(st != STATE_EXPOS)
 			{
 				ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [+] : %d",st);
-				return NULL;
+				return nullptr;
 			}
 			// set new state depending on source
 			st = STATE_EXPO;
@@ -399,7 +399,7 @@ jsl_data_scal* jsl_parser::eat_num()
 			if(st != STATE_START && st != STATE_SIGN && st != STATE_INTG && st != STATE_REALS && st != STATE_REAL && st != STATE_EXPOS && st != STATE_EXPO)
 			{
 				ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [0] : %d",st);
-				return NULL;
+				return nullptr;
 			}
 			// set new state depending on source
 			if(st == STATE_START || st == STATE_SIGN) st = STATE_ZERO;
@@ -419,14 +419,14 @@ jsl_data_scal* jsl_parser::eat_num()
 			if(st != STATE_START && st != STATE_SIGN && st != STATE_INTG && st != STATE_REALS && st != STATE_REAL && st != STATE_EXPOS && st != STATE_EXPO)
 			{
 				ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [digit] : %d",st);
-				return NULL;
+				return nullptr;
 			}
 			// set new state depending on source
 			if(st == STATE_START || st == STATE_SIGN) st = STATE_INTG;
 			else if(st == STATE_REALS) st = STATE_REAL;
 			else if(st == STATE_EXPOS) st = STATE_EXPO;
 			break;
-		default: return NULL; // invalid src
+		default: return nullptr; // invalid src
 		}
 
 		// eat stream
@@ -436,22 +436,22 @@ jsl_data_scal* jsl_parser::eat_num()
 	if(st != STATE_ZERO && st != STATE_INTG && st != STATE_REAL && st != STATE_EXPO)
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : illegal num state [end] : %d",st);
-		return NULL;
+		return nullptr;
 	}
 
-	jsl_data_scal* scal = NULL;
+	jsl_data_scal* scal = nullptr;
 
 	if(st == STATE_INTG)
 	{
 		int32_t num = 0;
 		scal = jsl_data_pool::hire(num);
-		if(scal != NULL) scal->from_string(str);
+		if(scal != nullptr) scal->from_string(str);
 	}
 	else
 	{
 		double num = 0;
 		scal = jsl_data_pool::hire(num);
-		if(scal != NULL) scal->from_string(str);
+		if(scal != nullptr) scal->from_string(str);
 	}
 
 	return scal;
@@ -463,7 +463,7 @@ jsl_data_scal* jsl_parser::eat_str()
 	if(scan_str(str))
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : unexpected EOF");
-		return NULL;
+		return nullptr;
 	} // EOF
 
 	return jsl_data_pool::hire(str);
@@ -474,7 +474,7 @@ bool jsl_parser::scan_str(std::string& _str)
 	if(m_src.peek() != '"')
 	{
 		ESP_LOGE(PARSER_LOGTAG, "Error : wrong init char [%c]",m_src.peek());
-		return NULL;
+		return true;
 	}
 
 	m_src.get();
@@ -539,7 +539,7 @@ bool jsl_parser::unescape(std::string& _str)
 
 		char buf[5] = {};
 		m_src.get(buf,4);
-		std::string::value_type ch = std::strtol(buf,NULL,16);
+		std::string::value_type ch = std::strtol(buf,nullptr,16);
 		utf8_str(ch,_str);
 		break;
 	}

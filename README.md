@@ -19,7 +19,7 @@ if(!load_file("/test.json",test)) return;
 
 jsl_parser parser(test);
 jsl_data_dict* data = parser.parse();
-if(data != NULL)
+if(data != nullptr)
 {
 	ESP_LOGI(PARSER_TEST_LOGTAG, "Data file parsed");
 	std::cout << data->encode(true) << "\n\n";

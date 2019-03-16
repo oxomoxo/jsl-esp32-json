@@ -31,7 +31,7 @@
 #include <algorithm>
 
 
-#define DATA_LOGTAG "DATA :"
+constexpr char DATA_LOGTAG[] = "DATA :";
 #include <esp_log.h>
 
 #include "jsl-data.h"
@@ -326,6 +326,8 @@ void jsl_data_vect::encode(std::ostream& _out, bool _pretty, std::string _tabs) 
 
 void jsl_data_pool::init(uint16_t _s, uint16_t _d, uint16_t _v)
 {
+	ESP_LOGI("DATA :","JSL_DATA_POOL::INIT");
+
 	std::vector<jsl_data_scal>().swap(m_scals);
 	std::vector<jsl_data_scal*>().swap(m_scals_for_hire);
 	if(_s != 0)
@@ -405,7 +407,7 @@ jsl_data_scal* jsl_data_pool::hire_scal()
 {
 	if(m_scals_for_hire.size() == 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 	jsl_data_scal* data;
 	data = m_scals_for_hire.back();
@@ -426,7 +428,7 @@ jsl_data_dict* jsl_data_pool::hire_dict()
 {
 	if(m_dicts_for_hire.size() == 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 	jsl_data_dict* data;
 	data = m_dicts_for_hire.back();
@@ -438,7 +440,7 @@ void jsl_data_pool::fire(jsl_data_dict& _data)
 {
 	for(auto child = _data.begin(); child != _data.end(); ++child)
 	{
-		if(child->second != NULL)
+		if(child->second != nullptr)
 		{
 			child->second->fire();
 		}
@@ -454,7 +456,7 @@ jsl_data_vect* jsl_data_pool::hire_vect()
 {
 	if(m_vects_for_hire.size() == 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 	jsl_data_vect* data;
 	data = m_vects_for_hire.back();
@@ -466,7 +468,7 @@ void jsl_data_pool::fire(jsl_data_vect& _data)
 {
 	for(auto child = _data.begin(); child != _data.end(); ++child)
 	{
-		if((*child) != NULL)
+		if((*child) != nullptr)
 		{
 			(*child)->fire();
 		}

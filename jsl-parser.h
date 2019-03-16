@@ -79,7 +79,7 @@ void test_parser()
 
 	jsl_parser parser(str);
 	jsl_data_dict* data = parser.parse();
-	if(data != NULL)
+	if(data != nullptr)
 	{
 		ESP_LOGI(LOGTAG, "Data file parsed");
 		std::cout << data->encode(true) << "\n\n";
