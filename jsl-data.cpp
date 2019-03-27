@@ -23,14 +23,13 @@
 
 
 
-
-// #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
-
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
 
 
+#define LOG_LOCAL_LEVEL ESP_LOG_NONE
+// #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
 constexpr char DATA_LOGTAG[] = "DATA :";
 #include <esp_log.h>
 
